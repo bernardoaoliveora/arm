@@ -1,0 +1,37 @@
+{
+  "name": "gestao-estoque-custodia",
+  "description": "Sistema de Controle de Estoque, Ferramentas e Custódia para Equipes Externas",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "test:auth": "node tests/auth-validation.mjs",
+    "test:core": "node tests/core-modules-validation.mjs",
+    "test:movements": "node tests/movements-validation.mjs",
+    "test:dashboard": "node tests/dashboard-alerts-validation.mjs",
+    "test:audit": "node tests/full-audit-validation.mjs",
+    "test:demo": "node tests/demo-flow-validation.mjs",
+    "seed:demo": "node scripts/seed-demo-presentation.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.62.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "oxlint": "^1.89.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.5"
+  }
+}
