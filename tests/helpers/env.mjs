@@ -1,0 +1,36 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.resolve(__dirname, '../../.env');
+
+export function getEnvCredentials() {
+  // Carrega .env se existir e variáveis não estiverem setadas
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, 'utf8');
+    content.split('\n').forEach(line => {
+      const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+      if (match) {
+        const key = match[1];
+        let value = match[2] || '';
+        if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
+        if (value.startsWith("'") && value.endsWith("'")) value = value.slice(1, -1);
+        if (!process.env[key]) {
+          process.env[key] = value.trim();
+        }
+      }
+    });
+  }
+
+  const url = process.env.VITE_SUPABASE_URL;
+  const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+  if (!url || !anonKey) {
+    throw new Error(
+      'Configuração ausente: VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY devem estar definidas no ambiente ou no arquivo .env.'
+    );
+  }
+
+  return { url, anonKey };
+}
