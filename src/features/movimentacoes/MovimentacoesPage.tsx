@@ -20,7 +20,7 @@ export const MovimentacoesPage: React.FC = () => {
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
         gap: 'var(--space-4)',
       }}>
         {/* Card 0: Entrada de Materiais (Gestão) */}

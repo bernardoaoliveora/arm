@@ -160,45 +160,45 @@ export const LoginPage: React.FC = () => {
             <span style={{ fontWeight: 600, color: 'var(--color-text-muted)', display: 'block', marginBottom: 'var(--space-2)' }}>
               CENÁRIOS DE TESTE PREPARADOS:
             </span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
               <button
                 type="button"
                 onClick={() => fillCredentials('admin@empresa.com.br', 'SenhaForte@2026!')}
                 className="btn btn-secondary btn-sm"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', flexWrap: 'wrap', whiteSpace: 'normal', textAlign: 'left', padding: '0.45rem 0.6rem', gap: '4px' }}
               >
                 <span>🔑 Administrador (Acesso Total)</span>
-                <span className="text-mono">admin@empresa.com.br</span>
+                <span className="text-mono" style={{ fontSize: '0.72rem', opacity: 0.85 }}>admin@empresa.com.br</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fillCredentials('tecnico@empresa.com.br', 'SenhaForte@2026!')}
                 className="btn btn-secondary btn-sm"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', flexWrap: 'wrap', whiteSpace: 'normal', textAlign: 'left', padding: '0.45rem 0.6rem', gap: '4px' }}
               >
                 <span>🔧 Técnico Ativo (Campo)</span>
-                <span className="text-mono">tecnico@empresa.com.br</span>
+                <span className="text-mono" style={{ fontSize: '0.72rem', opacity: 0.85 }}>tecnico@empresa.com.br</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fillCredentials('gerente@empresa.com.br', 'SenhaForte@2026!')}
                 className="btn btn-secondary btn-sm"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', flexWrap: 'wrap', whiteSpace: 'normal', textAlign: 'left', padding: '0.45rem 0.6rem', gap: '4px' }}
               >
                 <span>📋 Gerente (Gestão Parcial)</span>
-                <span className="text-mono">gerente@empresa.com.br</span>
+                <span className="text-mono" style={{ fontSize: '0.72rem', opacity: 0.85 }}>gerente@empresa.com.br</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fillCredentials('inativo@empresa.com.br', 'SenhaForte@2026!')}
                 className="btn btn-secondary btn-sm"
-                style={{ justifyContent: 'space-between', borderColor: 'var(--color-danger)' }}
+                style={{ justifyContent: 'space-between', flexWrap: 'wrap', whiteSpace: 'normal', textAlign: 'left', padding: '0.45rem 0.6rem', gap: '4px', borderColor: 'var(--color-danger)' }}
               >
                 <span style={{ color: 'var(--color-danger)' }}>⛔ Usuário Desativado</span>
-                <span className="text-mono">inativo@empresa.com.br</span>
+                <span className="text-mono" style={{ fontSize: '0.72rem', opacity: 0.85 }}>inativo@empresa.com.br</span>
               </button>
             </div>
           </div>

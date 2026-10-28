@@ -34,20 +34,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(15, 23, 42, 0.65)',
-        backdropFilter: 'blur(2px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 100,
-        padding: 'var(--space-4)',
-      }}
+      className="modal-overlay"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -56,31 +43,29 @@ export const Modal: React.FC<ModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="card"
+        className="modal-dialog"
         style={{
-          width: '100%',
           maxWidth,
-          boxShadow: 'var(--shadow-modal)',
           animation: 'fadeIn 0.15s ease-out',
         }}
       >
-        <div className="card-header">
+        <div className="modal-header">
           <div>
             <h3 id="modal-title" className="card-title">{title}</h3>
-            {description && <p className="form-hint">{description}</p>}
+            {description && <p className="form-hint" style={{ marginTop: '2px' }}>{description}</p>}
           </div>
           <button
             onClick={onClose}
             className="btn-icon btn-ghost"
             aria-label="Fechar modal"
-            style={{ color: 'var(--color-text-muted)' }}
+            style={{ color: 'var(--color-text-muted)', minWidth: '36px', minHeight: '36px' }}
           >
             <X size={18} />
           </button>
         </div>
-        <div className="card-body">{children}</div>
+        <div className="modal-body">{children}</div>
         {footerActions && (
-          <div className="card-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)' }}>
+          <div className="modal-footer">
             {footerActions}
           </div>
         )}

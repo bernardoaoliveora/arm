@@ -215,7 +215,7 @@ export const RegistrarDevolucaoPage: React.FC = () => {
           </div>
         ) : (
           <form onSubmit={handleValidarDevolucao}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 'var(--space-4)' }}>
               <Select
                 label="Depósito de Destino (Recebimento)"
                 required
@@ -236,7 +236,7 @@ export const RegistrarDevolucaoPage: React.FC = () => {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)', marginTop: 'var(--space-3)' }}>
+            <div className="form-grid-2" style={{ marginTop: 'var(--space-3)' }}>
               <Input
                 label="Quantidade a Devolver"
                 type="number"
@@ -270,7 +270,7 @@ export const RegistrarDevolucaoPage: React.FC = () => {
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+            <div className="form-actions">
               <Button variant="secondary" type="button" onClick={() => navigate('/movimentacoes')}>
                 Cancelar
               </Button>

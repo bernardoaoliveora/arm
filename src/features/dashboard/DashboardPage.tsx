@@ -303,7 +303,7 @@ export const DashboardPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <Button
             variant="ghost"
             size="sm"
@@ -342,7 +342,7 @@ export const DashboardPage: React.FC = () => {
       <Card>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
           gap: 'var(--space-4)',
           alignItems: 'flex-end'
         }}>
@@ -391,7 +391,7 @@ export const DashboardPage: React.FC = () => {
       {/* Grid de KPIs Consolidados */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
         gap: 'var(--space-4)',
       }}>
         {/* KPI 1: Produtos Cadastrados */}
@@ -494,7 +494,7 @@ export const DashboardPage: React.FC = () => {
                 ) : (
                   <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))',
                     gap: 'var(--space-2)'
                   }}>
                     {est.itens.map(item => (
@@ -530,7 +530,7 @@ export const DashboardPage: React.FC = () => {
       {/* Seção 2: Quantidade sob Responsabilidade dos Técnicos & Consumo do Período */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
         gap: 'var(--space-4)',
       }}>
         {/* Materiais em Custódia com Técnicos */}
@@ -628,7 +628,7 @@ export const DashboardPage: React.FC = () => {
         <Card title="Ações Rápidas de Campo">
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
             gap: 'var(--space-3)',
           }}>
             <Button

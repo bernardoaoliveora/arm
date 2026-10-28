@@ -121,7 +121,7 @@ export const AlertasPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <Button
             variant="ghost"
             size="sm"
@@ -164,7 +164,7 @@ export const AlertasPage: React.FC = () => {
       <Card>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
           gap: 'var(--space-4)',
         }}>
           <Input

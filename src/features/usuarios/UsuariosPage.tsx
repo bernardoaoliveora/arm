@@ -353,7 +353,7 @@ export const UsuariosPage: React.FC = () => {
 
       {/* Barra de Filtros e Busca */}
       <Card padding="sm">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-3)', alignItems: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: 'var(--space-3)', alignItems: 'center' }}>
           <Input
             label=""
             placeholder="Buscar por Nome, E-mail ou Empresa..."
@@ -592,7 +592,7 @@ export const UsuariosPage: React.FC = () => {
             />
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+          <div className="form-grid-2">
             <Select
               label="Perfil de Alçada"
               required

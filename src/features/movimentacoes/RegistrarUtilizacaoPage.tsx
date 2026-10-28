@@ -290,7 +290,7 @@ export const RegistrarUtilizacaoPage: React.FC = () => {
                 hint="Somente consumíveis sob sua responsabilidade direta podem sofrer baixa de uso."
               />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 'var(--space-3)', marginTop: 'var(--space-3)' }}>
+              <div className="form-grid-1-2" style={{ marginTop: 'var(--space-3)' }}>
                 <Input
                   label="Quantidade Utilizada"
                   type="number"
@@ -310,7 +310,7 @@ export const RegistrarUtilizacaoPage: React.FC = () => {
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+              <div className="form-actions">
                 <Button variant="secondary" type="button" onClick={() => navigate('/movimentacoes')}>
                   Cancelar
                 </Button>
@@ -333,7 +333,7 @@ export const RegistrarUtilizacaoPage: React.FC = () => {
             </div>
           ) : (
             <form onSubmit={handleValidarOcorrencia} style={{ marginTop: 'var(--space-4)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+              <div className="form-grid-2">
                 <Select
                   label="Tipo da Ocorrência"
                   required
@@ -384,7 +384,7 @@ export const RegistrarUtilizacaoPage: React.FC = () => {
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+              <div className="form-actions">
                 <Button variant="secondary" type="button" onClick={() => navigate('/movimentacoes')}>
                   Cancelar
                 </Button>

@@ -21,7 +21,7 @@ out/
 .env.test.local
 .env.production.local
 *.env
-! .env.example
+!.env.example
 
 # Logs de Execução e Debuggers
 logs/

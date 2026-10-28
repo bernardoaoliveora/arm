@@ -356,7 +356,7 @@ export const HistoricoPage: React.FC = () => {
       <Card>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
           gap: 'var(--space-4)',
         }}>
           <Input
@@ -578,6 +578,8 @@ export const HistoricoPage: React.FC = () => {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 'var(--space-3)',
               marginTop: 'var(--space-4)',
               paddingTop: 'var(--space-4)',
               borderTop: '1px solid var(--color-border)',
@@ -641,7 +643,7 @@ export const HistoricoPage: React.FC = () => {
               borderRadius: 'var(--radius-md)',
               padding: 'var(--space-4)',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
               gap: 'var(--space-3)',
               fontSize: 'var(--font-size-xs)'
             }}>

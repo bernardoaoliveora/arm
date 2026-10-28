@@ -214,13 +214,52 @@ npm run seed:demo
 
 ---
 
+## 📱 Responsividade Total e Experiência em Campo
+
+O sistema foi rigorosamente desenvolvido e testado para operação perfeita em múltiplos tamanhos de tela:
+
+| Dispositivo / Formato | Breakpoint Alvo | Comportamento de Layout |
+| :--- | :--- | :--- |
+| **Desktop & Monitores Widescreen** | $\ge$ 1025px (1366px, 1920px) | Layout amplo de 2 colunas com barra lateral fixa e tabelas estendidas. |
+| **Tablets em Paisagem / Notebooks** | 769px a 1024px | Adaptação de cards e ativação do Drawer recolhível. |
+| **Tablets em Retrato** | 641px a 768px | Barra de atalhos rápidos inferior (`bottom-nav`) e Drawer lateral acionado por toque. |
+| **Smartphones Grandes (Max / Plus)** | 481px a 640px (430px) | Formulários automáticos em 1 coluna e botões com largura total (`100%`). |
+| **Smartphones Compactos** | 361px a 480px (375px) | Modais com rolagem interna protegida e fontes de inputs em 16px (evita auto-zoom iOS). |
+| **Smartphones Ultra-Estreitos** | $\le$ 360px (320px) | Espaçamentos protegidos e zero overflow ou cortes horizontais. |
+
+### Principais Inovações Móveis:
+* **Menu Drawer Deslizante:** A barra lateral se transforma em um drawer fluido com backdrop semi-transparente e botão de fechar, acessível via menu hambúrguer no cabeçalho.
+* **Barra de Ações Rápidas de Campo:** Atalhos instantâneos na base da tela para os técnicos registrarem retiradas, consumos e devoluções com uma só mão.
+* **Modais com Rolagem Interna:** O rodapé com botões de confirmação permanece sempre fixo e visível, mesmo com teclados virtuais abertos ou em orientação horizontal.
+
+---
+
 ## 📦 Publicação e Repositório Remoto
 
 * **Repositório GitHub:** [https://github.com/bernardoaoliveora/arm.git](https://github.com/bernardoaoliveora/arm.git)
 * **Desenvolvedor / Organização:** `bnwebstudio`
+
+### Como Publicar Atualizações no GitHub:
+Para enviar os commits com segurança e rastreabilidade:
+* **No Windows:** Execute o script com dois cliques em `publish-to-github.bat` ou no terminal:
+  ```cmd
+  publish-to-github.bat
+  ```
+* **No Linux / macOS / WSL:** Execute o script bash:
+  ```bash
+  chmod +x publish-to-github.sh
+  ./publish-to-github.sh
+  ```
+* **Ou via comandos Git nativos:**
+  ```bash
+  git branch -M main
+  git remote add origin https://github.com/bernardoaoliveora/arm.git
+  git push -u origin main
+  ```
 
 ---
 
 ## 📄 Licença
 
 Este projeto é proprietário. Todos os direitos reservados.
+

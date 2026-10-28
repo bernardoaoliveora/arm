@@ -428,7 +428,7 @@ export const EstoquesPage: React.FC = () => {
 
       {/* Filtros e Busca */}
       <Card padding="sm">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-3)', alignItems: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: 'var(--space-3)', alignItems: 'center' }}>
           <Input
             label=""
             placeholder="Buscar por Nome do Estoque ou Empresa..."
@@ -476,7 +476,7 @@ export const EstoquesPage: React.FC = () => {
       ) : (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
           gap: 'var(--space-4)',
         }}>
           {estoquesFiltrados.map((est) => (

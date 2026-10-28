@@ -244,7 +244,7 @@ export const RegistrarRetiradaPage: React.FC = () => {
           </div>
         ) : (
           <form onSubmit={handleValidarRetirada}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 'var(--space-4)' }}>
               <Select
                 label="Depósito / Estoque de Origem"
                 required
@@ -281,7 +281,7 @@ export const RegistrarRetiradaPage: React.FC = () => {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 'var(--space-4)' }}>
+            <div className="form-grid-1-2">
               <Input
                 label="Quantidade Desejada"
                 type="number"
@@ -300,7 +300,7 @@ export const RegistrarRetiradaPage: React.FC = () => {
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+            <div className="form-actions">
               <Button variant="secondary" type="button" onClick={() => navigate('/movimentacoes')}>
                 Cancelar
               </Button>

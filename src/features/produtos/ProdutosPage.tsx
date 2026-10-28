@@ -383,11 +383,11 @@ export const ProdutosPage: React.FC = () => {
       <Card padding="md">
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
           gap: 'var(--space-3)',
           alignItems: 'end',
         }}>
-          <div style={{ gridColumn: 'span 2' }}>
+          <div className="grid-span-2">
             <Input
               label="Buscar por Nome ou SKU"
               placeholder="Ex: Cabo UTP, Furadeira Bosch, CAB-..."
@@ -612,7 +612,7 @@ export const ProdutosPage: React.FC = () => {
         }
       >
         <form onSubmit={handleFormSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+          <div className="form-grid-2">
             <Select
               label="Empresa Proprietária"
               required
@@ -632,7 +632,7 @@ export const ProdutosPage: React.FC = () => {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 'var(--space-3)' }}>
+          <div className="form-grid-1-2">
             <Input
               label="Código / SKU Único"
               required
@@ -650,7 +650,7 @@ export const ProdutosPage: React.FC = () => {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+          <div className="form-grid-2">
             <Select
               label="Tipo de Material"
               value={formData.tipo}
@@ -672,7 +672,7 @@ export const ProdutosPage: React.FC = () => {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+          <div className="form-grid-2">
             <Select
               label="Unidade de Medida"
               value={formData.unidade_medida}

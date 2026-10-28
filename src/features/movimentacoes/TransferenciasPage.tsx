@@ -256,7 +256,7 @@ export const TransferenciasPage: React.FC = () => {
         <form onSubmit={handleAbrirResumo}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
             gap: 'var(--space-4)',
           }}>
             <Select
@@ -331,7 +331,7 @@ export const TransferenciasPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+          <div className="form-actions">
             <Button variant="secondary" type="button" onClick={() => navigate('/movimentacoes')}>
               Cancelar
             </Button>

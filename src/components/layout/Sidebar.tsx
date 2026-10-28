@@ -15,12 +15,18 @@ import {
   Flame,
   ShieldCheck,
   UserCheck,
-  Briefcase
+  Briefcase,
+  X
 } from 'lucide-react';
 import { useAuth } from '../../features/auth/AuthContext';
 import type { NavItemConfig } from '../../types/app.types';
 
-export const Sidebar: React.FC = () => {
+export interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
   const perfil = user?.perfil || 'TECNICO';
 
@@ -75,12 +81,20 @@ export const Sidebar: React.FC = () => {
   const sistemaItems = filteredItems.filter(i => i.section === 'SISTEMA');
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         <div className="sidebar-logo">
           <Boxes size={22} style={{ color: 'var(--color-accent)' }} />
           <span>ESTOQUE PRO</span>
         </div>
+        <button
+          type="button"
+          className="sidebar-close-btn"
+          onClick={onClose}
+          aria-label="Fechar menu lateral"
+        >
+          <X size={20} />
+        </button>
       </div>
 
       <div className="sidebar-nav">
@@ -91,6 +105,7 @@ export const Sidebar: React.FC = () => {
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={onClose}
                 className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               >
                 {renderIcon(item.icon)}
@@ -109,6 +124,7 @@ export const Sidebar: React.FC = () => {
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={onClose}
                 className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               >
                 {renderIcon(item.icon)}
@@ -125,6 +141,7 @@ export const Sidebar: React.FC = () => {
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={onClose}
                 className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               >
                 {renderIcon(item.icon)}

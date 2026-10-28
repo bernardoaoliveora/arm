@@ -1,5 +1,5 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileNav } from './MobileNav';
@@ -7,11 +7,33 @@ import { isSupabaseConfigured } from '../../lib/supabase';
 import { Alert } from '../ui/Alert';
 
 export const AppLayout: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  // Fecha o drawer automaticamente ao mudar de rota em telas pequenas
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
+
   return (
     <div className="app-container">
-      <Sidebar />
+      {/* Backdrop semi-transparente para o drawer mobile */}
+      <div
+        className={`sidebar-backdrop ${isSidebarOpen ? 'active' : ''}`}
+        onClick={() => setIsSidebarOpen(false)}
+        aria-hidden="true"
+      />
+
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+
       <div className="main-wrapper">
-        <Header />
+        <Header
+          onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+          isSidebarOpen={isSidebarOpen}
+        />
         <main className="main-content">
           {!isSupabaseConfigured && (
             <Alert
@@ -30,3 +52,4 @@ export const AppLayout: React.FC = () => {
     </div>
   );
 };
+

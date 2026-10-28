@@ -250,7 +250,7 @@ export const EmpresasPage: React.FC = () => {
       {/* Barra de Filtros e Busca */}
       <Card padding="sm">
         <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '240px' }}>
+          <div style={{ flex: 1, minWidth: 'min(100%, 200px)' }}>
             <Input
               label=""
               placeholder="Buscar por Nome Fantasia, Razão Social ou CNPJ..."
@@ -265,6 +265,7 @@ export const EmpresasPage: React.FC = () => {
             leftIcon={<RefreshCw size={15} className={isLoading ? 'spinner' : ''} />}
             onClick={carregarEmpresas}
             disabled={isLoading}
+            style={{ flexShrink: 0 }}
           >
             Atualizar
           </Button>

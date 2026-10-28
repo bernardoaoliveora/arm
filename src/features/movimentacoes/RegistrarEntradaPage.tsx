@@ -171,7 +171,7 @@ export const RegistrarEntradaPage: React.FC = () => {
           </div>
         ) : (
           <form onSubmit={handleValidarFormulario}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 'var(--space-4)' }}>
               <Select
                 label="Depósito / Almoxarifado de Destino"
                 required
@@ -192,7 +192,7 @@ export const RegistrarEntradaPage: React.FC = () => {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-3)', marginTop: 'var(--space-3)' }}>
+            <div className="form-grid-3" style={{ marginTop: 'var(--space-3)' }}>
               <Input
                 label="Quantidade Recebida"
                 type="number"
@@ -227,7 +227,7 @@ export const RegistrarEntradaPage: React.FC = () => {
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+            <div className="form-actions">
               <Button variant="secondary" type="button" onClick={() => navigate('/movimentacoes')}>
                 Cancelar
               </Button>
