@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { ButtonHTMLAttributes } from 'react';
 import clsx from 'clsx';
 
@@ -19,18 +19,46 @@ export const Button: React.FC<ButtonProps> = ({
   rightIcon,
   className,
   disabled,
+  onClick,
   ...props
 }) => {
+  const [isClicked, setIsClicked] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    setIsClicked(true);
+    timerRef.current = setTimeout(() => {
+      setIsClicked(false);
+    }, 260);
+
+    if (onClick) {
+      onClick(e);
+    }
+  };
+
   return (
     <button
       className={clsx(
         'btn',
         `btn-${variant}`,
         size !== 'md' && `btn-${size}`,
+        isClicked && 'btn-clicked',
         className
       )}
       disabled={disabled || isLoading}
       aria-busy={isLoading}
+      onClick={handleClick}
       {...props}
     >
       {isLoading ? (

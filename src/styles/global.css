@@ -21,7 +21,7 @@ body {
   background-color: var(--color-bg-app);
   line-height: var(--line-height-normal);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Tipografia Base */

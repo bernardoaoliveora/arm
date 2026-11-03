@@ -243,20 +243,24 @@ export const RegistrarUtilizacaoPage: React.FC = () => {
       )}
 
       {/* Alternador de Abas */}
-      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
+        gap: 'var(--space-2)',
+      }}>
         <Button
           variant={tab === 'CONSUMO' ? 'primary' : 'secondary'}
-          leftIcon={<Flame size={16} />}
+          leftIcon={<Flame size={16} style={{ flexShrink: 0 }} />}
           onClick={() => { setTab('CONSUMO'); setErrorMsg(null); }}
-          style={{ flex: 1 }}
+          style={{ width: '100%', whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.25 }}
         >
           Baixa de Consumíveis em Serviço
         </Button>
         <Button
           variant={tab === 'OCORRENCIA' ? 'danger' : 'secondary'}
-          leftIcon={<AlertTriangle size={16} />}
+          leftIcon={<AlertTriangle size={16} style={{ flexShrink: 0 }} />}
           onClick={() => { setTab('OCORRENCIA'); setErrorMsg(null); }}
-          style={{ flex: 1 }}
+          style={{ width: '100%', whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.25 }}
         >
           Relatar Perda ou Dano Patrimonial
         </Button>

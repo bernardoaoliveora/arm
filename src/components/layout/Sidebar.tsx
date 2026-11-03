@@ -16,7 +16,9 @@ import {
   ShieldCheck,
   UserCheck,
   Briefcase,
-  X
+  X,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import { useAuth } from '../../features/auth/AuthContext';
 import type { NavItemConfig } from '../../types/app.types';
@@ -24,9 +26,16 @@ import type { NavItemConfig } from '../../types/app.types';
 export interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  onClose,
+  isCollapsed = false,
+  onToggleCollapse,
+}) => {
   const { user } = useAuth();
   const perfil = user?.perfil || 'TECNICO';
 
@@ -81,12 +90,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const sistemaItems = filteredItems.filter(i => i.section === 'SISTEMA');
 
   return (
-    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+    <aside className={`sidebar ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
-        <div className="sidebar-logo">
-          <Boxes size={22} style={{ color: 'var(--color-accent)' }} />
-          <span>ESTOQUE PRO</span>
+        <div
+          className="sidebar-logo"
+          onClick={isCollapsed ? onToggleCollapse : undefined}
+          style={{ cursor: isCollapsed ? 'pointer' : 'default' }}
+          title={isCollapsed ? 'Expandir menu lateral' : undefined}
+        >
+          <Boxes size={22} style={{ color: 'var(--color-accent)', flexShrink: 0 }} />
+          <span className="sidebar-logo-text">ESTOQUE PRO</span>
         </div>
+
+        <button
+          type="button"
+          className="sidebar-collapse-btn"
+          onClick={onToggleCollapse}
+          aria-label={isCollapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'}
+          title={isCollapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'}
+        >
+          {isCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+        </button>
+
         <button
           type="button"
           className="sidebar-close-btn"
@@ -106,10 +131,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 key={item.path}
                 to={item.path}
                 onClick={onClose}
+                title={isCollapsed ? item.label : undefined}
                 className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               >
-                {renderIcon(item.icon)}
-                <span>{item.label}</span>
+                <span className="nav-item-icon">{renderIcon(item.icon)}</span>
+                <span className="nav-item-label">{item.label}</span>
               </NavLink>
             ))}
           </>
@@ -125,10 +151,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 key={item.path}
                 to={item.path}
                 onClick={onClose}
+                title={isCollapsed ? item.label : undefined}
                 className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               >
-                {renderIcon(item.icon)}
-                <span>{item.label}</span>
+                <span className="nav-item-icon">{renderIcon(item.icon)}</span>
+                <span className="nav-item-label">{item.label}</span>
               </NavLink>
             ))}
           </>
@@ -142,27 +169,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 key={item.path}
                 to={item.path}
                 onClick={onClose}
+                title={isCollapsed ? item.label : undefined}
                 className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               >
-                {renderIcon(item.icon)}
-                <span>{item.label}</span>
+                <span className="nav-item-icon">{renderIcon(item.icon)}</span>
+                <span className="nav-item-label">{item.label}</span>
               </NavLink>
             ))}
           </>
         )}
       </div>
 
-      <div style={{
-        padding: 'var(--space-4)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-        fontSize: 'var(--font-size-xs)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', color: 'var(--color-text-light)' }}>
-          {perfil === 'ADMINISTRADOR' && <ShieldCheck size={16} color="var(--color-accent)" />}
-          {perfil === 'GERENTE' && <Briefcase size={16} color="var(--color-warning)" />}
-          {perfil === 'TECNICO' && <UserCheck size={16} color="var(--color-success)" />}
-          <span>Perfil Ativo: <strong>{perfil}</strong></span>
+      <div
+        className="sidebar-footer"
+        title={isCollapsed ? `Perfil Ativo: ${perfil}` : undefined}
+      >
+        <div className="sidebar-footer-content">
+          {perfil === 'ADMINISTRADOR' && <ShieldCheck size={16} color="var(--color-accent)" style={{ flexShrink: 0 }} />}
+          {perfil === 'GERENTE' && <Briefcase size={16} color="var(--color-warning)" style={{ flexShrink: 0 }} />}
+          {perfil === 'TECNICO' && <UserCheck size={16} color="var(--color-success)" style={{ flexShrink: 0 }} />}
+          <span className="sidebar-footer-text">Perfil Ativo: <strong>{perfil}</strong></span>
         </div>
       </div>
     </aside>

@@ -132,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
           >
             <User size={16} />
           </div>
-          <div className="header-user-text" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+          <div className="header-user-text">
             <span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 600, maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user?.nome}
             </span>

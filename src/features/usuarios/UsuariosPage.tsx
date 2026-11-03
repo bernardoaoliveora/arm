@@ -412,6 +412,7 @@ export const UsuariosPage: React.FC = () => {
           </div>
         ) : (
           <Table
+            className="usuarios-table"
             keyExtractor={(u) => u.id}
             data={usuariosFiltrados}
             columns={[
@@ -423,6 +424,7 @@ export const UsuariosPage: React.FC = () => {
                     <div style={{
                       width: '32px',
                       height: '32px',
+                      flexShrink: 0,
                       borderRadius: 'var(--radius-full)',
                       backgroundColor: u.perfil === 'ADMINISTRADOR' ? 'var(--color-primary)' : 'var(--color-surface-hover)',
                       color: u.perfil === 'ADMINISTRADOR' ? 'var(--color-text-inverse)' : 'var(--color-text-main)',
@@ -434,7 +436,7 @@ export const UsuariosPage: React.FC = () => {
                     }}>
                       {u.nome.charAt(0).toUpperCase()}
                     </div>
-                    <div>
+                    <div style={{ minWidth: 0 }}>
                       <strong>{u.nome}</strong>
                       <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
                         {u.email}
@@ -446,22 +448,24 @@ export const UsuariosPage: React.FC = () => {
               {
                 key: 'perfil',
                 header: 'Perfil de Acesso',
-                render: (u) => {
-                  if (u.perfil === 'ADMINISTRADOR') {
-                    return <Badge variant="info" icon={<Shield size={12} />}>Administrador</Badge>;
-                  }
-                  if (u.perfil === 'GERENTE') {
-                    return <Badge variant="neutral" icon={<Briefcase size={12} />}>Gerente</Badge>;
-                  }
-                  return <Badge variant="success" icon={<Wrench size={12} />}>Técnico</Badge>;
-                },
+                render: (u) => (
+                  <div className="usuarios-cell-align">
+                    {u.perfil === 'ADMINISTRADOR' ? (
+                      <Badge variant="info" icon={<Shield size={12} />}>Administrador</Badge>
+                    ) : u.perfil === 'GERENTE' ? (
+                      <Badge variant="neutral" icon={<Briefcase size={12} />}>Gerente</Badge>
+                    ) : (
+                      <Badge variant="success" icon={<Wrench size={12} />}>Técnico</Badge>
+                    )}
+                  </div>
+                ),
               },
               {
                 key: 'empresa_nome',
                 header: 'Empresa Vinculada',
                 render: (u) => (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: 'var(--font-size-xs)' }}>
-                    <Building2 size={12} style={{ color: 'var(--color-text-muted)' }} />
+                  <div className="usuarios-cell-align" style={{ gap: '4px', fontSize: 'var(--font-size-xs)' }}>
+                    <Building2 size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
                     <span>{u.empresa_nome}</span>
                   </div>
                 ),
@@ -471,13 +475,21 @@ export const UsuariosPage: React.FC = () => {
                 header: 'Estoques sob Responsabilidade',
                 render: (u) => {
                   if (u.perfil === 'ADMINISTRADOR') {
-                    return <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>Todos os Depósitos</span>;
+                    return (
+                      <div className="usuarios-cell-align">
+                        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>Todos os Depósitos</span>
+                      </div>
+                    );
                   }
                   if (u.estoques_responsaveis.length === 0) {
-                    return <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Nenhum estoque atribuído</span>;
+                    return (
+                      <div className="usuarios-cell-align">
+                        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Nenhum estoque atribuído</span>
+                      </div>
+                    );
                   }
                   return (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    <div className="usuarios-estoques-scroll">
                       {u.estoques_responsaveis.map((est) => (
                         <span
                           key={est.estoque_id}
@@ -492,7 +504,8 @@ export const UsuariosPage: React.FC = () => {
                             gap: '3px',
                           }}
                         >
-                          <Boxes size={10} /> {est.estoque_nome}
+                          <Boxes size={10} style={{ flexShrink: 0 }} />
+                          <span>{est.estoque_nome}</span>
                         </span>
                       ))}
                     </div>
@@ -503,12 +516,14 @@ export const UsuariosPage: React.FC = () => {
                 key: 'ativo',
                 header: 'Status',
                 render: (u) => (
-                  <Badge
-                    variant={u.ativo ? 'success' : 'danger'}
-                    icon={u.ativo ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
-                  >
-                    {u.ativo ? 'Ativo' : 'Desativado'}
-                  </Badge>
+                  <div className="usuarios-cell-align">
+                    <Badge
+                      variant={u.ativo ? 'success' : 'danger'}
+                      icon={u.ativo ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+                    >
+                      {u.ativo ? 'Ativo' : 'Desativado'}
+                    </Badge>
+                  </div>
                 ),
               },
               {
@@ -516,7 +531,7 @@ export const UsuariosPage: React.FC = () => {
                 header: 'Ações',
                 align: 'right',
                 render: (u) => (
-                  <div style={{ display: 'flex', gap: 'var(--space-2)', justifyContent: 'flex-end' }}>
+                  <div className="usuarios-cell-align" style={{ gap: 'var(--space-2)', justifyContent: 'flex-end' }}>
                     <Button
                       variant="ghost"
                       size="sm"

@@ -227,9 +227,12 @@ O sistema foi rigorosamente desenvolvido e testado para operação perfeita em m
 | **Smartphones Compactos** | 361px a 480px (375px) | Modais com rolagem interna protegida e fontes de inputs em 16px (evita auto-zoom iOS). |
 | **Smartphones Ultra-Estreitos** | $\le$ 360px (320px) | Espaçamentos protegidos e zero overflow ou cortes horizontais. |
 
-### Principais Inovações Móveis:
-* **Menu Drawer Deslizante:** A barra lateral se transforma em um drawer fluido com backdrop semi-transparente e botão de fechar, acessível via menu hambúrguer no cabeçalho.
-* **Barra de Ações Rápidas de Campo:** Atalhos instantâneos na base da tela para os técnicos registrarem retiradas, consumos e devoluções com uma só mão.
+### Principais Inovações de Interface e Experiência (UX/UI):
+* **Sidebar Fixa e Recolhível (Collapsible Sidebar):** Navegação lateral fixa em `100dvh` com alternância entre modo expandido (`260px`) e modo compacto de ícones com tooltips (`68px`), persistindo a preferência no `localStorage`, além de se transformar em um Drawer deslizante em telas $\le$ 1024px.
+* **Visão de Depósitos em Accordion:** No Painel Geral (`Dashboard`), os estoques físicos contam com seções expansíveis em formato *accordion* (com opção de *Expandir Todos / Recolher Todos*), mantendo a leitura limpa mesmo com dezenas de depósitos ativos.
+* **Células de Tabela com Rolagem Interna Controlada:** Na gestão de usuários, a coluna *Estoques sob Responsabilidade* possui lista com rolagem vertical interna (`Scrollable List`), preservando todos os vínculos visíveis sem distorcer a altura das linhas da tabela.
+* **Feedback Tátil de Ação nos Botões:** Todos os botões do Design System exibem transição imediata de cor e escala ao clique, retornando suavemente ao estado original.
+* **Barra de Ações Rápidas de Campo:** Atalhos instantâneos na base da tela (`bottom-nav`) para os técnicos registrarem retiradas, consumos e devoluções com uma só mão no smartphone.
 * **Modais com Rolagem Interna:** O rodapé com botões de confirmação permanece sempre fixo e visível, mesmo com teclados virtuais abertos ou em orientação horizontal.
 
 ---

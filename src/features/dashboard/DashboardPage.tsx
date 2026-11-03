@@ -12,7 +12,8 @@ import {
   CornerDownLeft,
   Clock,
   RefreshCw,
-  ShieldAlert
+  ShieldAlert,
+  ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { KPICard, Card, Button, Badge, Table, Select, Alert } from '../../components/ui';
@@ -134,6 +135,31 @@ export const DashboardPage: React.FC = () => {
   const [movimentacoesRecentes, setMovimentacoesRecentes] = useState<MovimentacaoRecente[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [erro, setErro] = useState<string>('');
+  const [estoquesExpandidos, setEstoquesExpandidos] = useState<Record<string, boolean>>({});
+
+  const toggleEstoqueAccordion = (estoqueId: string) => {
+    setEstoquesExpandidos((prev) => ({
+      ...prev,
+      [estoqueId]: !prev[estoqueId],
+    }));
+  };
+
+  const todosEstoquesExpandidos =
+    (metricas?.saldos_por_estoque.length || 0) > 0 &&
+    metricas!.saldos_por_estoque.every((est) => !!estoquesExpandidos[est.estoque_id]);
+
+  const alternarTodosEstoques = () => {
+    if (!metricas?.saldos_por_estoque) return;
+    if (todosEstoquesExpandidos) {
+      setEstoquesExpandidos({});
+    } else {
+      const novoEstado: Record<string, boolean> = {};
+      metricas.saldos_por_estoque.forEach((est) => {
+        novoEstado[est.estoque_id] = true;
+      });
+      setEstoquesExpandidos(novoEstado);
+    }
+  };
 
   // 1. Carregar listas para os selects de filtros
   useEffect(() => {
@@ -456,6 +482,13 @@ export const DashboardPage: React.FC = () => {
       <Card
         title="Disponibilidade Física por Depósito"
         subtitle="Saldos armazenados nos estoques físicos discriminados por produto e unidade de medida oficial"
+        action={
+          (metricas?.saldos_por_estoque.length || 0) > 0 ? (
+            <Button variant="ghost" size="sm" onClick={alternarTodosEstoques}>
+              {todosEstoquesExpandidos ? 'Recolher Todos' : 'Expandir Todos'}
+            </Button>
+          ) : undefined
+        }
       >
         {isLoading ? (
           <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
@@ -466,63 +499,98 @@ export const DashboardPage: React.FC = () => {
             Nenhum depósito cadastrado ou ativo.
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            {metricas?.saldos_por_estoque.map((est) => (
-              <div
-                key={est.estoque_id}
-                style={{
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: 'var(--space-4)',
-                  backgroundColor: 'var(--color-surface)',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
-                  <div>
-                    <h3 style={{ fontSize: 'var(--font-size-md)' }}>{est.estoque_nome}</h3>
-                    <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                      Tipo: {est.estoque_tipo} • {est.total_skus_disponiveis} produtos com saldo positivo
-                    </span>
-                  </div>
-                  <Badge variant="neutral">{est.estoque_tipo}</Badge>
-                </div>
-
-                {est.itens.length === 0 ? (
-                  <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
-                    Nenhum item com saldo positivo neste depósito.
-                  </p>
-                ) : (
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))',
-                    gap: 'var(--space-2)'
-                  }}>
-                    {est.itens.map(item => (
-                      <div
-                        key={item.produto_id}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            {metricas?.saldos_por_estoque.map((est) => {
+              const isExpanded = !!estoquesExpandidos[est.estoque_id];
+              return (
+                <div
+                  key={est.estoque_id}
+                  style={{
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-md)',
+                    backgroundColor: 'var(--color-surface)',
+                    overflow: 'hidden',
+                    transition: 'border-color var(--transition-fast)',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleEstoqueAccordion(est.estoque_id)}
+                    aria-expanded={isExpanded}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 'var(--space-3)',
+                      padding: 'var(--space-4)',
+                      textAlign: 'left',
+                      backgroundColor: isExpanded ? 'var(--color-surface-subtle)' : 'var(--color-surface)',
+                      borderBottom: isExpanded ? '1px solid var(--color-border-subtle)' : 'none',
+                      cursor: 'pointer',
+                      transition: 'background-color var(--transition-fast)',
+                    }}
+                  >
+                    <div style={{ minWidth: 0 }}>
+                      <h3 style={{ fontSize: 'var(--font-size-md)', margin: 0 }}>{est.estoque_nome}</h3>
+                      <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                        Tipo: {est.estoque_tipo} • {est.total_skus_disponiveis} produtos com saldo positivo
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', flexShrink: 0 }}>
+                      <Badge variant="neutral">{est.estoque_tipo}</Badge>
+                      <ChevronDown
+                        size={18}
                         style={{
-                          padding: 'var(--space-2) var(--space-3)',
-                          backgroundColor: 'var(--color-surface-hover)',
-                          borderRadius: 'var(--radius-sm)',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          fontSize: 'var(--font-size-xs)'
+                          color: 'var(--color-text-muted)',
+                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform var(--transition-normal)',
                         }}
-                      >
-                        <div>
-                          <strong>{item.nome}</strong>
-                          <div style={{ color: 'var(--color-text-muted)' }}><code>{item.codigo_sku}</code></div>
+                      />
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div style={{ padding: 'var(--space-4)' }}>
+                      {est.itens.length === 0 ? (
+                        <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+                          Nenhum item com saldo positivo neste depósito.
+                        </p>
+                      ) : (
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))',
+                          gap: 'var(--space-2)'
+                        }}>
+                          {est.itens.map(item => (
+                            <div
+                              key={item.produto_id}
+                              style={{
+                                padding: 'var(--space-2) var(--space-3)',
+                                backgroundColor: 'var(--color-surface-hover)',
+                                borderRadius: 'var(--radius-sm)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                fontSize: 'var(--font-size-xs)'
+                              }}
+                            >
+                              <div>
+                                <strong>{item.nome}</strong>
+                                <div style={{ color: 'var(--color-text-muted)' }}><code>{item.codigo_sku}</code></div>
+                              </div>
+                              <span style={{ fontWeight: 600, color: 'var(--color-accent)' }}>
+                                {item.quantidade_disponivel} {item.unidade_medida}
+                              </span>
+                            </div>
+                          ))}
                         </div>
-                        <span style={{ fontWeight: 600, color: 'var(--color-accent)' }}>
-                          {item.quantidade_disponivel} {item.unidade_medida}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </Card>

@@ -52,8 +52,10 @@ lerna-debug.log*
 ehthumbs.db
 Thumbs.db
 
-# Diretórios de Assistência / Automação Local
+# Diretórios de Assistência / Automação Local e Deploy
 .agents/
+.vercel/
+coverage/
 scratch/
 temp/
 tmp/

@@ -8,6 +8,13 @@ import { Alert } from '../ui/Alert';
 
 export const AppLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('estoque_pro_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const location = useLocation();
 
   // Fecha o drawer automaticamente ao mudar de rota em telas pequenas
@@ -15,8 +22,20 @@ export const AppLayout: React.FC = () => {
     setIsSidebarOpen(false);
   }, [location.pathname]);
 
+  const handleToggleCollapse = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('estoque_pro_sidebar_collapsed', String(next));
+      } catch {
+        // Ignora erro de storage se indisponível
+      }
+      return next;
+    });
+  };
+
   return (
-    <div className="app-container">
+    <div className={`app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Backdrop semi-transparente para o drawer mobile */}
       <div
         className={`sidebar-backdrop ${isSidebarOpen ? 'active' : ''}`}
@@ -27,6 +46,8 @@ export const AppLayout: React.FC = () => {
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={handleToggleCollapse}
       />
 
       <div className="main-wrapper">
