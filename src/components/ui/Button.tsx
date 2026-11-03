@@ -69,7 +69,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <>
           {leftIcon && <span className="btn-icon-left">{leftIcon}</span>}
-          {children}
+          {children && <span className="btn-label">{children}</span>}
           {rightIcon && <span className="btn-icon-right">{rightIcon}</span>}
         </>
       )}

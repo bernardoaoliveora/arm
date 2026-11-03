@@ -144,10 +144,10 @@ export const ConfiguracoesPage: React.FC = () => {
         description="Aprovar efetuará a baixa contábil definitiva. Rejeitar devolverá a responsabilidade ao técnico."
         footerActions={
           <>
-            <Button variant="danger" leftIcon={<XCircle size={14} />} onClick={handleRejeitar}>
+            <Button variant="danger" leftIcon={<XCircle size={16} />} onClick={handleRejeitar}>
               Rejeitar Baixa
             </Button>
-            <Button variant="primary" leftIcon={<CheckCircle2 size={14} />} onClick={handleAprovar}>
+            <Button variant="primary" leftIcon={<CheckCircle2 size={16} />} onClick={handleAprovar}>
               Aprovar Baixa Definitiva
             </Button>
           </>
