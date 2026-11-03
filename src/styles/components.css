@@ -340,7 +340,13 @@ form > .form-group:not(:last-child) {
   border-bottom: none;
 }
 
-.table tr:hover td {
+.table tbody tr {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.table tr:hover td,
+.table tr.table-row-selected td {
   background-color: var(--color-surface-hover);
 }
 

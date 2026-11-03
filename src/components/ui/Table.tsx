@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { TableColumn } from '../../types/app.types';
 import { Skeleton } from './Skeleton';
 import { EmptyState } from './EmptyState';
@@ -21,6 +22,8 @@ export function Table<T>({
   keyExtractor,
   className,
 }: TableProps<T>) {
+  const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null);
+
   return (
     <div className="table-container">
       <table className={`table ${className || ''}`}>
@@ -60,20 +63,35 @@ export function Table<T>({
               </td>
             </tr>
           ) : (
-            data.map((row) => (
-              <tr key={keyExtractor(row)}>
-                {columns.map((col) => (
-                  <td
-                    key={col.key}
-                    style={{
-                      textAlign: col.align || 'left',
-                    }}
-                  >
-                    {col.render ? col.render(row) : (row as Record<string, any>)[col.key]}
-                  </td>
-                ))}
-              </tr>
-            ))
+            data.map((row) => {
+              const rowKey = keyExtractor(row);
+              const isSelected = selectedRowKey === rowKey;
+              return (
+                <tr
+                  key={rowKey}
+                  className={isSelected ? 'table-row-selected' : undefined}
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement;
+                    if (target.closest('button, a, input, select')) {
+                      setSelectedRowKey(rowKey);
+                    } else {
+                      setSelectedRowKey((prev) => (prev === rowKey ? null : rowKey));
+                    }
+                  }}
+                >
+                  {columns.map((col) => (
+                    <td
+                      key={col.key}
+                      style={{
+                        textAlign: col.align || 'left',
+                      }}
+                    >
+                      {col.render ? col.render(row) : (row as Record<string, any>)[col.key]}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })
           )}
         </tbody>
       </table>
