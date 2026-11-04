@@ -478,8 +478,9 @@ export const DashboardPage: React.FC = () => {
         />
       </div>
 
-      {/* Seção 1: Quantidade Disponível por Estoque (Sem somar unidades incompatíveis) */}
+      {/* Seção 1: Quantidade Disponível por Estoque (Oculta conforme solicitação) */}
       <Card
+        style={{ display: 'none' }}
         title="Disponibilidade Física por Depósito"
         subtitle="Saldos armazenados nos estoques físicos discriminados por produto e unidade de medida oficial"
         action={
@@ -595,9 +596,9 @@ export const DashboardPage: React.FC = () => {
         )}
       </Card>
 
-      {/* Seção 2: Quantidade sob Responsabilidade dos Técnicos & Consumo do Período */}
+      {/* Seção 2: Quantidade sob Responsabilidade dos Técnicos & Consumo do Período (Oculta conforme solicitação) */}
       <div style={{
-        display: 'grid',
+        display: 'none',
         gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
         gap: 'var(--space-4)',
       }}>
@@ -738,8 +739,9 @@ export const DashboardPage: React.FC = () => {
         </Card>
       )}
 
-      {/* Seção 3: Movimentações Recentes */}
+      {/* Seção 3: Movimentações Recentes (Oculta conforme solicitação) */}
       <Card
+        style={{ display: 'none' }}
         title="Últimas Movimentações Registradas"
         subtitle="Histórico recente de transações atômicas de entradas, retiradas, consumos e devoluções"
         action={
