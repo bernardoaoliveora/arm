@@ -11,7 +11,12 @@ import {
   Building2,
   Boxes,
   AlertCircle,
-  Briefcase
+  Briefcase,
+  Eye,
+  Package,
+  Calendar,
+  Mail,
+  Clock
 } from 'lucide-react';
 import { Card, Button, Table, Badge, Modal, Input, Select, Alert } from '../../components/ui';
 import { supabase } from '../../lib/supabase';
@@ -28,6 +33,34 @@ interface UsuarioItem {
   ativo: boolean;
   criado_em: string;
   estoques_responsaveis: { estoque_id: string; estoque_nome: string }[];
+}
+
+interface ItemCustodiaTecnico {
+  produto_id: string;
+  nome: string;
+  codigo_sku: string;
+  tipo: string;
+  unidade_medida: string;
+  quantidade_posse: number;
+  atualizado_em: string;
+}
+
+interface MovimentacaoRecenteUsuario {
+  id: string;
+  tipo: string;
+  criado_em: string;
+  justificativa: string | null;
+  estoque_origem: { nome: string } | null;
+  estoque_destino: { nome: string } | null;
+  movimentacao_itens: Array<{
+    id: string;
+    quantidade: number;
+    produtos: {
+      nome: string;
+      codigo_sku: string;
+      unidade_medida: string;
+    } | null;
+  }>;
 }
 
 export const UsuariosPage: React.FC = () => {
@@ -54,6 +87,79 @@ export const UsuariosPage: React.FC = () => {
 
   // Modal de Confirmação de Ativação / Desativação
   const [confirmToggleUsuario, setConfirmToggleUsuario] = useState<UsuarioItem | null>(null);
+
+  // Modal de Detalhes e Armazenamento (Custódia) do Usuário / Técnico
+  const [detalheUsuario, setDetalheUsuario] = useState<UsuarioItem | null>(null);
+  const [custodiaTecnico, setCustodiaTecnico] = useState<ItemCustodiaTecnico[]>([]);
+  const [movimentacoesTecnico, setMovimentacoesTecnico] = useState<MovimentacaoRecenteUsuario[]>([]);
+  const [isLoadingDetalhes, setIsLoadingDetalhes] = useState(false);
+
+  const handleOpenDetalhesModal = async (u: UsuarioItem) => {
+    setDetalheUsuario(u);
+    setCustodiaTecnico([]);
+    setMovimentacoesTecnico([]);
+    setIsLoadingDetalhes(true);
+
+    try {
+      const [custRes, movsRes] = await Promise.all([
+        supabase
+          .from('custodia_itens')
+          .select(`
+            quantidade_posse,
+            atualizado_em,
+            produtos:produto_id (
+              id,
+              nome,
+              codigo_sku,
+              tipo,
+              unidade_medida
+            )
+          `)
+          .eq('tecnico_id', u.id),
+        supabase
+          .from('movimentacoes')
+          .select(`
+            id,
+            tipo,
+            criado_em,
+            justificativa,
+            estoque_origem:estoque_origem_id (nome),
+            estoque_destino:estoque_destino_id (nome),
+            movimentacao_itens (
+              id,
+              quantidade,
+              produtos (nome, codigo_sku, unidade_medida)
+            )
+          `)
+          .or(`tecnico_envolvido_id.eq.${u.id},usuario_operador_id.eq.${u.id}`)
+          .order('criado_em', { ascending: false })
+          .limit(5),
+      ]);
+
+      if (!custRes.error && custRes.data) {
+        const formatados: ItemCustodiaTecnico[] = (custRes.data as any[])
+          .filter((row) => Number(row.quantidade_posse) > 0)
+          .map((row) => ({
+            produto_id: row.produtos?.id || '',
+            nome: row.produtos?.nome || 'Material',
+            codigo_sku: row.produtos?.codigo_sku || 'SKU',
+            tipo: row.produtos?.tipo || 'CONSUMIVEL',
+            unidade_medida: row.produtos?.unidade_medida || 'UN',
+            quantidade_posse: Number(row.quantidade_posse) || 0,
+            atualizado_em: row.atualizado_em || '',
+          }));
+        setCustodiaTecnico(formatados);
+      }
+
+      if (!movsRes.error && movsRes.data) {
+        setMovimentacoesTecnico(movsRes.data as unknown as MovimentacaoRecenteUsuario[]);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar detalhes do usuário:', err);
+    } finally {
+      setIsLoadingDetalhes(false);
+    }
+  };
 
   // Formulário
   const [formData, setFormData] = useState({
@@ -535,6 +641,14 @@ export const UsuariosPage: React.FC = () => {
                     <Button
                       variant="ghost"
                       size="sm"
+                      leftIcon={<Eye size={14} />}
+                      onClick={() => handleOpenDetalhesModal(u)}
+                    >
+                      Detalhes
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       leftIcon={<Edit2 size={14} />}
                       onClick={() => handleOpenEditModal(u)}
                     >
@@ -724,6 +838,380 @@ export const UsuariosPage: React.FC = () => {
             </span>
           </div>
         </div>
+      </Modal>
+
+      {/* Modal de Detalhes e Armazenamento (Custódia) do Técnico / Usuário */}
+      <Modal
+        isOpen={Boolean(detalheUsuario)}
+        onClose={() => setDetalheUsuario(null)}
+        title={`Detalhes do Colaborador: ${detalheUsuario?.nome || ''}`}
+        description="Informações cadastrais, estoques vinculados, armazenamento em posse (custódia) e movimentações recentes."
+        maxWidth="720px"
+        footerActions={
+          <>
+            {detalheUsuario && (
+              <Button
+                variant="secondary"
+                leftIcon={<Edit2 size={14} />}
+                onClick={() => {
+                  const u = detalheUsuario;
+                  setDetalheUsuario(null);
+                  handleOpenEditModal(u);
+                }}
+              >
+                Editar Cadastro
+              </Button>
+            )}
+            <Button variant="primary" onClick={() => setDetalheUsuario(null)}>
+              Fechar
+            </Button>
+          </>
+        }
+      >
+        {detalheUsuario && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
+            {/* 1. Cartão de Informações do Usuário */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--space-3)',
+                padding: 'var(--space-4)',
+                backgroundColor: 'var(--color-surface-subtle)',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                  <div
+                    style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: 'var(--radius-full)',
+                      backgroundColor: detalheUsuario.perfil === 'ADMINISTRADOR' ? 'var(--color-primary)' : 'var(--color-accent)',
+                      color: '#ffffff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 'var(--font-size-base)',
+                      fontWeight: 700,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {detalheUsuario.nome.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, color: 'var(--color-text-main)' }}>
+                      {detalheUsuario.nome}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+                      <Mail size={12} />
+                      <span>{detalheUsuario.email}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+                  {detalheUsuario.perfil === 'ADMINISTRADOR' ? (
+                    <Badge variant="info" icon={<Shield size={12} />}>Administrador</Badge>
+                  ) : detalheUsuario.perfil === 'GERENTE' ? (
+                    <Badge variant="neutral" icon={<Briefcase size={12} />}>Gerente</Badge>
+                  ) : (
+                    <Badge variant="success" icon={<Wrench size={12} />}>Técnico</Badge>
+                  )}
+                  <Badge
+                    variant={detalheUsuario.ativo ? 'success' : 'danger'}
+                    icon={detalheUsuario.ativo ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+                  >
+                    {detalheUsuario.ativo ? 'Ativo' : 'Desativado'}
+                  </Badge>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
+                  gap: 'var(--space-3)',
+                  paddingTop: 'var(--space-3)',
+                  borderTop: '1px solid var(--color-border-subtle)',
+                  fontSize: 'var(--font-size-xs)',
+                }}
+              >
+                <div>
+                  <span style={{ color: 'var(--color-text-muted)', display: 'block', marginBottom: '2px', textTransform: 'uppercase', fontSize: '10px', fontWeight: 600 }}>
+                    Empresa Vinculada
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600, color: 'var(--color-text-main)' }}>
+                    <Building2 size={13} style={{ color: 'var(--color-text-muted)' }} />
+                    <span>{detalheUsuario.empresa_nome}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <span style={{ color: 'var(--color-text-muted)', display: 'block', marginBottom: '2px', textTransform: 'uppercase', fontSize: '10px', fontWeight: 600 }}>
+                    Cadastrado em
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600, color: 'var(--color-text-main)' }}>
+                    <Calendar size={13} style={{ color: 'var(--color-text-muted)' }} />
+                    <span>
+                      {detalheUsuario.criado_em
+                        ? new Date(detalheUsuario.criado_em).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                          })
+                        : '—'}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <span style={{ color: 'var(--color-text-muted)', display: 'block', marginBottom: '2px', textTransform: 'uppercase', fontSize: '10px', fontWeight: 600 }}>
+                    Depósitos Autorizados
+                  </span>
+                  <div style={{ fontWeight: 600, color: 'var(--color-text-main)' }}>
+                    {detalheUsuario.perfil === 'ADMINISTRADOR'
+                      ? 'Todos os Depósitos'
+                      : `${detalheUsuario.estoques_responsaveis.length} depósito(s)`}
+                  </div>
+                </div>
+              </div>
+
+              {detalheUsuario.perfil !== 'ADMINISTRADOR' && detalheUsuario.estoques_responsaveis.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: 'var(--space-2)' }}>
+                  {detalheUsuario.estoques_responsaveis.map((est) => (
+                    <span
+                      key={est.estoque_id}
+                      style={{
+                        backgroundColor: 'var(--color-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-sm)',
+                        padding: '2px 8px',
+                        fontSize: 'var(--font-size-xs)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <Boxes size={11} style={{ color: 'var(--color-accent)' }} />
+                      <span>{est.estoque_nome}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 2. Armazenamento / Mochila de Custódia do Técnico */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Briefcase size={16} style={{ color: 'var(--color-accent)' }} />
+                  <h4 style={{ margin: 0, fontSize: 'var(--font-size-sm)', fontWeight: 700, color: 'var(--color-text-main)' }}>
+                    Armazenamento em Posse (Mochila / Custódia Atual)
+                  </h4>
+                </div>
+                <Badge variant={custodiaTecnico.length > 0 ? 'info' : 'neutral'}>
+                  {custodiaTecnico.length} {custodiaTecnico.length === 1 ? 'material em posse' : 'materiais em posse'}
+                </Badge>
+              </div>
+
+              {/* Resumo Rápido do Armazenamento */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 'var(--space-3)',
+                }}
+              >
+                <div
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--color-border-subtle)',
+                    backgroundColor: 'var(--color-surface)',
+                  }}
+                >
+                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', display: 'block' }}>
+                    SKUs Distintos
+                  </span>
+                  <strong style={{ fontSize: 'var(--font-size-lg)', color: 'var(--color-text-main)' }}>
+                    {custodiaTecnico.length}
+                  </strong>
+                </div>
+
+                <div
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--color-border-subtle)',
+                    backgroundColor: 'var(--color-surface)',
+                  }}
+                >
+                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', display: 'block' }}>
+                    Consumíveis
+                  </span>
+                  <strong style={{ fontSize: 'var(--font-size-lg)', color: 'var(--color-accent)' }}>
+                    {custodiaTecnico.filter((i) => i.tipo === 'CONSUMIVEL').length}
+                  </strong>
+                </div>
+
+                <div
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--color-border-subtle)',
+                    backgroundColor: 'var(--color-surface)',
+                  }}
+                >
+                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', display: 'block' }}>
+                    Reutilizáveis
+                  </span>
+                  <strong style={{ fontSize: 'var(--font-size-lg)', color: '#7c3aed' }}>
+                    {custodiaTecnico.filter((i) => i.tipo !== 'CONSUMIVEL').length}
+                  </strong>
+                </div>
+              </div>
+
+              {isLoadingDetalhes ? (
+                <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
+                  Carregando itens armazenados com o colaborador...
+                </div>
+              ) : custodiaTecnico.length === 0 ? (
+                <div
+                  style={{
+                    padding: 'var(--space-6)',
+                    textAlign: 'center',
+                    color: 'var(--color-text-muted)',
+                    backgroundColor: 'var(--color-surface-subtle)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px dashed var(--color-border)',
+                    fontSize: 'var(--font-size-sm)',
+                  }}
+                >
+                  <Package size={24} style={{ margin: '0 auto var(--space-2)', opacity: 0.4 }} />
+                  <div>Nenhum material ou ferramenta em posse deste colaborador no momento.</div>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    maxHeight: '220px',
+                    overflowY: 'auto',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-md)',
+                    divideY: '1px solid var(--color-border-subtle)',
+                  } as React.CSSProperties}
+                >
+                  {custodiaTecnico.map((item, idx) => (
+                    <div
+                      key={item.produto_id || idx}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 'var(--space-3)',
+                        padding: '10px 14px',
+                        borderBottom: idx < custodiaTecnico.length - 1 ? '1px solid var(--color-border-subtle)' : 'none',
+                        backgroundColor: 'var(--color-surface)',
+                      }}
+                    >
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <strong style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-main)' }}>
+                            {item.nome}
+                          </strong>
+                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}>
+                            [{item.codigo_sku}]
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                          {item.tipo === 'CONSUMIVEL' ? 'Material Consumível' : 'Ferramenta / Reutilizável'}
+                          {item.atualizado_em &&
+                            ` • Atualizado em ${new Date(item.atualizado_em).toLocaleDateString('pt-BR')}`}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                        <Badge variant={item.tipo === 'CONSUMIVEL' ? 'info' : 'neutral'}>
+                          {item.quantidade_posse} {item.unidade_medida}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 3. Últimas Movimentações Vinculadas */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Clock size={15} style={{ color: 'var(--color-text-secondary)' }} />
+                <h4 style={{ margin: 0, fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)' }}>
+                  Últimas Movimentações do Colaborador
+                </h4>
+              </div>
+
+              {isLoadingDetalhes ? (
+                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', padding: 'var(--space-2)' }}>
+                  Consultando histórico recente...
+                </div>
+              ) : movimentacoesTecnico.length === 0 ? (
+                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic', padding: 'var(--space-2)' }}>
+                  Nenhuma movimentação recente registrada para este colaborador.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {movimentacoesTecnico.map((mov) => (
+                    <div
+                      key={mov.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 'var(--space-2)',
+                        padding: '8px 12px',
+                        borderRadius: 'var(--radius-md)',
+                        backgroundColor: 'var(--color-surface-subtle)',
+                        border: '1px solid var(--color-border-subtle)',
+                        fontSize: 'var(--font-size-xs)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flexWrap: 'wrap' }}>
+                        <Badge
+                          variant={
+                            mov.tipo === 'RETIRADA'
+                              ? 'info'
+                              : mov.tipo === 'DEVOLUCAO'
+                              ? 'success'
+                              : mov.tipo === 'CONSUMO' || mov.tipo === 'PERDA'
+                              ? 'danger'
+                              : 'neutral'
+                          }
+                        >
+                          {mov.tipo}
+                        </Badge>
+                        <span style={{ color: 'var(--color-text-main)', fontWeight: 500 }}>
+                          {mov.movimentacao_itens
+                            ?.map((mi) => `${mi.quantidade} ${mi.produtos?.unidade_medida || ''} ${mi.produtos?.nome || ''}`)
+                            .join(', ') || 'Operação registrada'}
+                        </span>
+                      </div>
+                      <span style={{ color: 'var(--color-text-muted)', flexShrink: 0 }}>
+                        {new Date(mov.criado_em).toLocaleString('pt-BR', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

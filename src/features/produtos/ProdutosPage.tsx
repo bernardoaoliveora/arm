@@ -382,12 +382,12 @@ export const ProdutosPage: React.FC = () => {
       {/* Barra de Filtros e Pesquisa */}
       <Card padding="md">
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
+          display: 'flex',
+          flexWrap: 'wrap',
           gap: 'var(--space-3)',
-          alignItems: 'end',
+          alignItems: 'flex-end',
         }}>
-          <div className="grid-span-2">
+          <div style={{ flex: '1.3 1 180px', minWidth: '160px' }}>
             <Input
               label="Buscar por Nome ou SKU"
               placeholder="Ex: Cabo UTP, Furadeira Bosch, CAB-..."
@@ -397,39 +397,55 @@ export const ProdutosPage: React.FC = () => {
             />
           </div>
 
-          <Select
-            label="Tipo de Material"
-            value={tipoFiltro}
-            onChange={(e) => setTipoFiltro(e.target.value)}
-            options={[
-              { value: 'TODOS', label: 'Todos os Tipos' },
-              { value: 'CONSUMIVEL', label: 'Consumíveis (Baixa por Uso)' },
-              { value: 'REUTILIZAVEL', label: 'Ferramentas Reutilizáveis' },
-            ]}
-          />
+          <div style={{ flex: '1 1 145px', minWidth: '135px' }}>
+            <Select
+              label="Tipo de Material"
+              value={tipoFiltro}
+              onChange={(e) => setTipoFiltro(e.target.value)}
+              options={[
+                { value: 'TODOS', label: 'Todos os Tipos' },
+                { value: 'CONSUMIVEL', label: 'Consumíveis (Baixa por Uso)' },
+                { value: 'REUTILIZAVEL', label: 'Ferramentas Reutilizáveis' },
+              ]}
+            />
+          </div>
 
-          <Select
-            label="Categoria"
-            value={categoriaFiltro}
-            onChange={(e) => setCategoriaFiltro(e.target.value)}
-            options={[
-              { value: 'TODAS', label: 'Todas as Categorias' },
-              ...categorias.map((c) => ({ value: c.id, label: c.nome })),
-            ]}
-          />
+          <div style={{ flex: '1 1 145px', minWidth: '135px' }}>
+            <Select
+              label="Categoria"
+              value={categoriaFiltro}
+              onChange={(e) => setCategoriaFiltro(e.target.value)}
+              options={[
+                { value: 'TODAS', label: 'Todas as Categorias' },
+                ...categorias.map((c) => ({ value: c.id, label: c.nome })),
+              ]}
+            />
+          </div>
 
-          <Select
-            label="Status"
-            value={statusFiltro}
-            onChange={(e) => setStatusFiltro(e.target.value)}
-            options={[
-              { value: 'TODOS', label: 'Todos os Status' },
-              { value: 'ATIVOS', label: 'Apenas Ativos' },
-              { value: 'INATIVOS', label: 'Apenas Inativos' },
-            ]}
-          />
+          <div style={{ flex: '1 1 135px', minWidth: '125px' }}>
+            <Select
+              label="Status"
+              value={statusFiltro}
+              onChange={(e) => setStatusFiltro(e.target.value)}
+              options={[
+                { value: 'TODOS', label: 'Todos os Status' },
+                { value: 'ATIVOS', label: 'Apenas Ativos' },
+                { value: 'INATIVOS', label: 'Apenas Inativos' },
+              ]}
+            />
+          </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', height: '42px', gap: 'var(--space-2)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              height: '38px',
+              gap: 'var(--space-3)',
+              flex: '0 0 auto',
+              marginLeft: 'auto',
+            }}
+          >
             <label style={{
               display: 'flex',
               alignItems: 'center',
@@ -437,6 +453,7 @@ export const ProdutosPage: React.FC = () => {
               fontSize: 'var(--font-size-sm)',
               cursor: 'pointer',
               userSelect: 'none',
+              whiteSpace: 'nowrap',
               color: apenasEstoqueBaixo ? 'var(--color-warning)' : 'var(--color-text-secondary)',
               fontWeight: apenasEstoqueBaixo ? 600 : 400,
             }}>
@@ -444,13 +461,11 @@ export const ProdutosPage: React.FC = () => {
                 type="checkbox"
                 checked={apenasEstoqueBaixo}
                 onChange={(e) => setApenasEstoqueBaixo(e.target.checked)}
-                style={{ width: '16px', height: '16px', accentColor: 'var(--color-warning)' }}
+                style={{ width: '16px', height: '16px', accentColor: 'var(--color-warning)', flexShrink: 0 }}
               />
               <span>Abaixo do Mínimo</span>
             </label>
-          </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '42px' }}>
             <Button
               variant="secondary"
               size="md"

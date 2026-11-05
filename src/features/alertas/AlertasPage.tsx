@@ -166,6 +166,7 @@ export const AlertasPage: React.FC = () => {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
           gap: 'var(--space-4)',
+          alignItems: 'flex-end',
         }}>
           <Input
             label="Buscar por Nome ou SKU"

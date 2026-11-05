@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
 import type { SelectHTMLAttributes } from 'react';
 import clsx from 'clsx';
 
@@ -28,13 +28,63 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   ...props
 }, ref) => {
   const selectId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
+  const labelRef = useRef<HTMLLabelElement | null>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const [showFullLabel, setShowFullLabel] = useState(false);
+
+  const checkTruncation = useCallback(() => {
+    const el = labelRef.current;
+    if (!el) return false;
+    const truncated = el.scrollWidth > el.clientWidth + 1;
+    setIsTruncated(truncated);
+    if (!truncated) {
+      setShowFullLabel(false);
+    }
+    return truncated;
+  }, []);
+
+  useEffect(() => {
+    checkTruncation();
+    const el = labelRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => {
+      checkTruncation();
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [label, checkTruncation]);
+
+  const handleLabelMouseEnter = () => {
+    if (checkTruncation()) {
+      setShowFullLabel(true);
+    }
+  };
+
+  const handleLabelMouseLeave = () => {
+    setShowFullLabel(false);
+  };
 
   return (
     <div className="form-group">
       {label && (
-        <label htmlFor={selectId} className="form-label">
-          {label} {required && <span style={{ color: 'var(--color-danger)' }}>*</span>}
-        </label>
+        <div
+          className="form-label-wrapper"
+          onMouseEnter={handleLabelMouseEnter}
+          onMouseLeave={handleLabelMouseLeave}
+        >
+          <label
+            ref={labelRef}
+            htmlFor={selectId}
+            className={clsx('form-label', isTruncated && 'form-label-truncated')}
+          >
+            {label} {required && <span style={{ color: 'var(--color-danger)' }}>*</span>}
+          </label>
+          {isTruncated && showFullLabel && (
+            <label htmlFor={selectId} className="form-label-full-overlay">
+              {label} {required && <span style={{ color: 'var(--color-danger)' }}>*</span>}
+            </label>
+          )}
+        </div>
       )}
       <select
         ref={ref}
